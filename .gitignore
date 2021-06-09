@@ -1,0 +1,22 @@
+node_modules
+
+# Production
+build/
+
+# Logs
+yarn-debug.log*
+yarn-error.log*
+
+# Editors
+.vscode/
+.idea/*
+
+# Misc
+.DS_Store
+
+# dotenv environment variables file
+.env
+.env.test
+
+# openzeppelin
+.openzeppelin
