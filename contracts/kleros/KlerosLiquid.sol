@@ -19,7 +19,7 @@ import { IChainlinkRNG } from "../interfaces/IChainlinkRNG.sol";
 import { SortitionSumTreeFactory } from "@kleros/kleros/contracts/data-structures/SortitionSumTreeFactory.sol";
 
 /**
- *  @title xKlerosLiquid
+ *  @title KlerosLiquid
  *  @dev This contract is an adaption of Mainnet's KlerosLiquid (https://github.com/kleros/kleros/blob/69cfbfb2128c29f1625b3a99a3183540772fda08/contracts/kleros/KlerosLiquid.sol)
  *  for Polygon chain. Notice that variables referring to ETH values in this contract, will hold the native token values of the chain on which KlerosLiquid is deployed.
  *  When this contract gets deployed on Polygon chain, ETH variables will hold MATIC values.
@@ -186,16 +186,16 @@ contract KlerosLiquid is Initializable, TokenController, Arbitrator {
     /** @dev Requires a specific phase.
      *  @param _phase The required phase.
      */
-    modifier onlyDuringPhase(Phase _phase) {require(phase == _phase); _;}
+    modifier onlyDuringPhase(Phase _phase) {require(phase == _phase, "Invalid phase."); _;}
 
     /** @dev Requires a specific period in a dispute.
      *  @param _disputeID The ID of the dispute.
      *  @param _period The required period.
      */
-    modifier onlyDuringPeriod(uint _disputeID, Period _period) {require(disputes[_disputeID].period == _period); _;}
+    modifier onlyDuringPeriod(uint _disputeID, Period _period) {require(disputes[_disputeID].period == _period, "Invalid period."); _;}
 
     /** @dev Requires that the sender is the governor. Note that the governor is expected to not be malicious. */
-    modifier onlyByGovernor() {require(governor == msg.sender); _;}
+    modifier onlyByGovernor() {require(governor == msg.sender, "Not authorized."); _;}
 
     /* Constructor */
 
@@ -259,7 +259,7 @@ contract KlerosLiquid is Initializable, TokenController, Arbitrator {
      *  @param _data The data sent with the call.
      */
     function executeGovernorProposal(address _destination, uint _amount, bytes _data) external onlyByGovernor {
-        require(_destination.call.value(_amount)(_data)); // solium-disable-line security/no-call-value
+        require(_destination.call.value(_amount)(_data), "Failed to execute proposal."); // solium-disable-line security/no-call-value
     }
 
     /** @dev Changes the `governor` storage variable.
@@ -517,7 +517,7 @@ contract KlerosLiquid is Initializable, TokenController, Arbitrator {
      */
     function castCommit(uint _disputeID, uint[] _voteIDs, bytes32 _commit) external onlyDuringPeriod(_disputeID, Period.commit) {
         Dispute storage dispute = disputes[_disputeID];
-        require(_commit != bytes32(0));
+        require(_commit != bytes32(0), "Commit cannot be 0.");
         for (uint i = 0; i < _voteIDs.length; i++) {
             require(dispute.votes[dispute.votes.length - 1][_voteIDs[i]].account == msg.sender, "The caller has to own the vote.");
             require(dispute.votes[dispute.votes.length - 1][_voteIDs[i]].commit == bytes32(0), "Already committed this vote.");
@@ -536,7 +536,7 @@ contract KlerosLiquid is Initializable, TokenController, Arbitrator {
      */
     function castVote(uint _disputeID, uint[] _voteIDs, uint _choice, uint _salt) external onlyDuringPeriod(_disputeID, Period.vote) {
         Dispute storage dispute = disputes[_disputeID];
-        require(_voteIDs.length > 0);
+        require(_voteIDs.length > 0, "No votes to process.");
         require(_choice <= dispute.numberOfChoices, "The choice has to be less than or equal to the number of choices for the dispute.");
 
         // Save the votes.
@@ -612,7 +612,7 @@ contract KlerosLiquid is Initializable, TokenController, Arbitrator {
         lockInsolventTransfers = false;
         Dispute storage dispute = disputes[_disputeID];
         uint end = dispute.repartitionsInEachRound[_appeal] + _iterations;
-        require(end >= dispute.repartitionsInEachRound[_appeal]);
+        require(end >= dispute.repartitionsInEachRound[_appeal], "Already executed.");
         uint penaltiesInRoundCache = dispute.penaltiesInEachRound[_appeal]; // For saving gas.
         (uint tokenReward, uint ETHReward) = (0, 0);
 
@@ -657,7 +657,6 @@ contract KlerosLiquid is Initializable, TokenController, Arbitrator {
                     if (pinakion.balanceOf(vote.account) < jurors[vote.account].stakedTokens || !vote.voted)
                         for (uint j = 0; j < jurors[vote.account].subcourtIDs.length; j++)
                             _setStake(vote.account, jurors[vote.account].subcourtIDs[j], 0);
-
                 }
             }
             if (i == dispute.votes[_appeal].length - 1) {
