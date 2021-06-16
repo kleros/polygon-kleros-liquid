@@ -6,8 +6,18 @@ var PolicyRegistry = artifacts.require("./PolicyRegistry.sol");
 var KlerosLiquidExtraViews = artifacts.require("./KlerosLiquidExtraViews.sol");
 var SortitionSumTreeFactory = artifacts.require("./SortitionSumTreeFactory.sol");
 
+const contracts = {
+  "mumbai": {
+    goerliTestToken: "0x3f152B63Ec5CA5831061B2DccFb29a874C317502",
+    goerliDummyERC20: "0x655F2166b0709cd575202630952D71E2bB0d61Af",
+    mumbaiTestToeknPOS: "0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e",
+    mumbaiDummyERC20POS: "0x4d350e8A3C0D57714d3b80c9e2030ab8f1Bb7875",
+    LINK: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
+  }
+}
+
 const pinakionParams = {
-  " matic": {
+  "matic": {
     tokenName: "Wrapped Pinakion on Polygon",
     tokenSymbol: "stPNK",
     bridgedPinakion: "0xad93E067e149f0A5ecd12D8EA83B05581dD6374C"
@@ -23,7 +33,7 @@ let KlerosLiquidParams = {
   "matic": {
     governor: null,
     pinakion: null,
-    RNGenerator: "0x67e90a54AeEA85f21949c645082FE95d77BC1E70",
+    RNGenerator: "0x0000000000000000000000000000000000000000",
     minStakingTime: 3600,
     maxDrawingTime: 7200,
     hiddenVotes: false,
@@ -37,7 +47,7 @@ let KlerosLiquidParams = {
   "mumbai": {
     governor: null,
     pinakion: null,
-    RNGenerator: "0x8f2b78169B0970F11a762e56659Db52B59CBCf1B",
+    RNGenerator: "0x0000000000000000000000000000000000000000",
     minStakingTime: 3600,
     maxDrawingTime: 7200,
     hiddenVotes: false,
@@ -109,4 +119,5 @@ module.exports = async function(deployer, network) {
   console.log('Deployed KlerosLiquid: ', KlerosLiquidInstance.address);
   console.log('Deployed Extra Views: ', ExtraViewsInstance.address);
   console.log('Deployed Policy Registry: ', PolicyRegistryInstance.address);
+  console.log('The RNG address of the KlerosLiquid contract has to be set after deploying the RNG contract');
 };
