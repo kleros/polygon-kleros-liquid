@@ -117,6 +117,7 @@ contract WrappedPinakion is Initializable {
      * @notice Moves `_amount` tokens from the caller's account to `_recipient`.
      * @param _recipient The entity receiving the funds.
      * @param _amount The amount to tranfer in base units.
+     * @return True on success.
      */
     function transfer(address _recipient, uint256 _amount) public returns (bool) {
         if (isContract(controller)) {
@@ -134,6 +135,7 @@ contract WrappedPinakion is Initializable {
      * @param _sender The entity to take the funds from.
      * @param _recipient The entity receiving the funds.
      * @param _amount The amount to tranfer in base units.
+     * @return True on success.
      */
     function transferFrom(
         address _sender,
@@ -163,6 +165,7 @@ contract WrappedPinakion is Initializable {
      * @notice Approves `_spender` to spend `_amount`.
      * @param _spender The entity allowed to spend funds.
      * @param _amount The amount of base units the entity will be allowed to spend.
+     * @return True on success.
      */
     function approve(address _spender, uint256 _amount) public returns (bool) {
         // Alerts the token controller of the approve function call
@@ -182,6 +185,7 @@ contract WrappedPinakion is Initializable {
      * @notice Increases the `_spender` allowance by `_addedValue`.
      * @param _spender The entity allowed to spend funds.
      * @param _addedValue The amount of extra base units the entity will be allowed to spend.
+     * @return True on success.
      */
     function increaseAllowance(address _spender, uint256 _addedValue) public returns (bool) {
         uint256 newAllowance = allowance[msg.sender][_spender].add(_addedValue);
@@ -202,6 +206,7 @@ contract WrappedPinakion is Initializable {
      * @notice Decreases the `_spender` allowance by `_subtractedValue`.
      * @param _spender The entity whose spending allocation will be reduced.
      * @param _subtractedValue The reduction of spending allocation in base units.
+     * @return True on success.
      */
     function decreaseAllowance(address _spender, uint256 _subtractedValue) public returns (bool) {
         uint256 newAllowance = allowance[msg.sender][_spender].sub(_subtractedValue); // ERC20: decreased allowance below zero
